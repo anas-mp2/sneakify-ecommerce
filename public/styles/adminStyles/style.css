@@ -1,0 +1,43 @@
+body {
+    background-color: #161616;
+    color: white;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 80px; /* Increased space between logo and form */
+    max-width: 900px;
+    width: 100%;
+    padding-left: 50px; /* Moves everything slightly left */
+}
+
+.sneaker-img {
+    width: 350px; /* Increased logo size */
+}
+
+.login-form {
+    width: 350px; /* Increased login box size */
+    padding: 30px;
+    background-color: #1f1f1f;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    margin-left: 20px; /* Moves form slightly to the right */
+}
+
+.btn-purple {
+    background-color: #7a42f4;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    padding: 10px;
+}
+
+.btn-purple:hover {
+    background-color: #6a36e0;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <%-include("../../views/partials/user/header")%>
+   
+    <!-- Main Content -->
+    <div class="container">
+        <div class="content">
+            <div class="left-side">
+                <div class="left-side-img">
+                    <img src="/images/signup logo.jpg" alt="">
+                </div>
+            </div>
+            <div class="right-side">
+                <div class="login-form">
+                    <h2>Login to Sneakify</h2>
+                    <h5>Enter Your Details below</h5>
+                    <form id="loginform" method="post" action="/login">
+                        <input type="text" name="email" id="email" placeholder="Email or Phone Number"/>
+                        <div id="error1" class="error-message"></div>
+                        <input type="password" name="password" id="password" placeholder="Password" />
+                        <div id="error2" class="error-message"></div>
+                        <p style="color: red;"><%= message  %></p>
+                        <div class="form-actions">
+                            <button type="submit" class="login-button">Login</button>
+                            <a href="/forgot-password" class="forget-password">Forgot Password?</a>
+                        </div>
+                    </form>
+                    
+                    <p>Don't have an account? <a href="/user/signup" id="signup">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/script/login.js"></script>
+</body>
+</html>
+<%-include("../../views/partials/user/footer")%>

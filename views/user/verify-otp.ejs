@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/styles/verify-otp.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <form action="/verify-otp" onsubmit="return validateOTPForm()" method="post">
+        <div class="container">
+            <h1>OTP Verification</h1>
+            <p>Enter the 6-digit code sent to your device</p>
+            <div id="timer">Time remaining: 3:00</div>
+            <div class="otp-input">
+                <input class="otp" type="number" required>
+                <input class="otp" type="number" required>
+                <input class="otp" type="number" required>
+                <input class="otp" type="number" required>
+                <input class="otp" type="number" required>
+                <input class="otp" type="number" required>
+            </div>
+            <button type="submit">Verify</button>
+        </form>
+        <form action="/resend-otp" onsubmit="return resendOtp()" method="post">
+            <button type="submit" >Resend Code</button>
+        </div>
+        </form>
+    <script src="/script/verify-otp.js"></script>
+</body>
+</html>
