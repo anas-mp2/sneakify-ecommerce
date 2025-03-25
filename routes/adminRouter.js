@@ -1,11 +1,11 @@
 const express=require('express');
 const router=express.Router();
 const adminController=require('../controller/admin/adminController');
-const customerController=require('../controller/admin/customerController')
 router.get('/login',adminController.loadLogin);
 router.post('/verifyLogin',adminController.verifyLogin);
-router.get('/users', customerController.customerInfo);
-router.post('/blockCustomer', customerController.blockCustomer);
+router.post('/block-user/:id',adminController.blockUser);
+router.post('/unblock-user/:id',adminController.unblockUser);
+router.get('/users',adminController.loadUsers);
 
 
 module.exports=router;

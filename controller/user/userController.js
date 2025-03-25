@@ -71,7 +71,7 @@ async function sendVerificationEmail(email, otp) {
 }
 
 const signup = async (req, res) => {
-    const { name, email, password, cpassword } = req.body;
+    const { email, password, cpassword } = req.body;
     
     try {
       
@@ -95,7 +95,7 @@ const signup = async (req, res) => {
                 }
 
                 req.session.userOtp = otp;
-                req.session.userData = { name, email, password };
+                req.session.userData = { email, password };
         
                 console.log("OTP sent:", otp);
                 return res.render("verify-otp");
@@ -117,32 +117,38 @@ const securePassword=async (password)=>{
     }
 }
 const verifyOtp = async (req, res) => {
-  try{
-     const {otp}=req.body;
-     console.log(otp);
+    try {
+        const { otp } = req.body;
+        console.log("Entered OTP:", otp);
 
-     if(otp===req.session.userOtp){
-        const user=req.session.userData;
-        const passwordHash=await securePassword(user.password);
+        if (!req.session.userData) {
+            return res.status(400).json({ success: false, message: "Session expired. Please sign up again." });
+        }
 
-        const saveUserData=new User({
-            name:user.name,
-            email:user.email,
-            password:passwordHash,
-        })
-        await saveUserData.save();
-        req.session.user=saveUserData._id;
-        res.json({success:true,redirectUrl:"/"})
-     }else{
-        res.status(400).json({success:false,message:"Invalid OTP, Please try again ",messageSuccess:""});
+        if (otp === req.session.userOtp) {
+            const user = req.session.userData;
 
-     }
-  }catch(error){
-    console.error("Error Verifying OTP",error);
-    res.status(500).json({success:false,message:"An error occured",messageSuccess:""});
+            const passwordHash = await securePassword(user.password);
 
-  }
+            const saveUserData = new User({
+                email: user.email,
+                password: passwordHash,
+            });
+
+            await saveUserData.save();
+            req.session.user = saveUserData._id;
+
+            res.json({ success: true, redirectUrl: "/" });
+        } else {
+            res.status(400).json({ success: false, message: "Invalid OTP, Please try again" });
+        }
+    } catch (error) {
+        console.error("Error Verifying OTP", error);
+        res.status(500).json({ success: false, message: "An error occurred. Please try again." });
+    }
 };
+
+  
 
 const resendOtp = async (req, res) => {
     try {

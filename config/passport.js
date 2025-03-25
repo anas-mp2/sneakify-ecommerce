@@ -1,3 +1,4 @@
+// passport.js
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../model/userSchema");
@@ -13,10 +14,13 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user already exists in DB by email, not just Google ID
+        // Check if user already exists in DB by email
         let user = await User.findOne({ email: profile.emails[0].value });
 
         if (user) {
+          // Update the user's profile picture if they logged in via Google
+          user.profilePicture = profile.photos && profile.photos.length > 0 ? profile.photos[0].value : user.profilePicture;
+          await user.save();
           return done(null, user);
         } else {
           // Create new user
@@ -24,6 +28,7 @@ passport.use(
             name: profile.displayName,
             email: profile.emails[0].value,
             googleId: profile.id,
+            profilePicture: profile.photos && profile.photos.length > 0 ? profile.photos[0].value : '', // Save the Google profile picture
           });
           await user.save();
           return done(null, user);

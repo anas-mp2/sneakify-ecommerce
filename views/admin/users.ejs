@@ -1,72 +1,234 @@
-<div class="d-flex">
-    <!-- Sidebar -->
-    <%- include("../partials/admin/sidebar") %>
+<!-- views/admin/users.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneakify Users Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/styles/adminStyles/dashboard.css">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0; /* Remove default body margin */
+        }
+        .table {
+            color: #ffffff;
+            width: 100%;
+            margin-bottom: 0; /* Remove any default margin */
+        }
+        .table thead th {
+            color: #cccccc;
+            text-align: center;
+            padding: 15px;
+        }
+        .table tbody td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+        }
+        /* Ensure equal spacing between columns (4 columns now) */
+        .table th, .table td {
+            width: 25%; /* 100% / 4 columns = 25% each */
+        }
+        .btn-block {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+        }
+        .btn-unblock {
+            background-color: #00ff00;
+            color: black;
+            border: none;
+            padding: 5px 15px;
+        }
+        .pagination .page-link {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .input-group input {
+            background-color: #2c2c2c !important;
+            border: 1px solid #444;
+        }
+        /* Ensure flex-grow-1 takes full width with no padding/margin on the right */
+        .flex-grow-1 {
+            padding: 0;
+            margin: 0;
+        }
+        /* Adjust container padding to add space on both left and right */
+        .container-fluid.custom-container {
+            padding: 1.5rem 1.5rem 1.5rem 1.5rem; /* Add 1.5rem padding on both left and right */
+            margin-right: 0;
+        }
+        /* Ensure table-responsive takes full width within the padded container */
+        .table-responsive {
+            width: 100%;
+            margin-right: 0;
+            padding-right: 0;
+        }
+        /* Ensure the d-flex container takes full width */
+        .d-flex {
+            width: 100%;
+            margin: 0;
+        }
+        /* Ensure pagination respects the right padding */
+        .pagination {
+            margin-right: 0;
+        }
+        /* Modal Styling */
+        .modal-content {
+            background-color: #2c2c2c;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+        .modal-header {
+            border-bottom: 1px solid #444;
+        }
+        .modal-footer {
+            border-top: 1px solid #444;
+        }
+        .modal-title {
+            color: #cccccc;
+        }
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <%- include('../partials/admin/sidebar') %>
 
-    <!-- Main Content -->
-    <div class="container mt-4 text-white flex-grow-1">
-        <h2 class="mb-4">Users</h2>
-        <table class="table table-dark table-hover">
-            <thead>
-                <tr>
-                    <th>USER IMAGE</th>
-                    <th>USER NAME</th>
-                    <th>EMAIL</th>
-                    <th>ADDRESS</th>
-                    <th>DATE OF CREATION</th>
-                    <th>ACTION</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach(user => { %>
-                <tr>
-                    <td><img src="<%= user.image || '/images/default-user.png' %>" alt="User" width="40" class="rounded-circle"></td>
-                    <td><%= user.name %></td>
-                    <td><%= user.email %></td>
-                    <td><%= user.address %></td>
-                    <td><%= user.createdOn ? user.createdOn.toDateString() : "N/A" %></td>
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <%- include('../partials/admin/navbar') %>
+            
+            <div class="container-fluid custom-container">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control bg-dark text-white" placeholder="Search for User Name">
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>USER IMAGE</th>
+                                <th>USER NAME</th>
+                                <th>EMAIL</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(user => { %>
+                                <tr>
+                                    <td>
+                                        <img src="<%= user.profilePicture || 'https://www.gravatar.com/avatar/' + user.gravatarHash + '?d=robohash&s=50' %>" 
+                                             class="rounded-circle" 
+                                             alt="User" 
+                                             width="50" 
+                                             height="50">
+                                    </td>
+                                    <td><%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'Unknown User') %></td>
+                                    <td><%= user.email || 'N/A' %></td>
+                                    <td>
+                                        <% if (user.isBlocked) { %>
+                                            <!-- Unblock Button -->
+                                            <button type="button" class="btn btn-unblock btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#confirmModal"
+                                                data-action="/admin/unblock-user/<%= user.id %>"
+                                                data-message="Are you sure you want to unblock <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
+                                                data-action-type="unblock">
+                                                UNBLOCK
+                                            </button>
+                                        <% } else { %>
+                                            <!-- Block Button -->
+                                            <button type="button" class="btn btn-block btn-sm" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#confirmModal"
+                                                data-action="/admin/block-user/<%= user.id %>"
+                                                data-message="Are you sure you want to block <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
+                                                data-action-type="block">
+                                                BLOCK
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <td>
-                        <button class="btn <%= user.isBlocked ? 'btn-success' : 'btn-danger' %> block-btn" data-id="<%= user._id %>">
-                            <%= user.isBlocked ? "UNBLOCK" : "BLOCK" %>
-                        </button>
-                    </td>
-                </tr>
-                <% }); %>
-            </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <nav>
-            <ul class="pagination">
-                <% if (currentPage > 1) { %>
-                    <li class="page-item"><a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>">Prev</a></li>
-                <% } %>
-                <li class="page-item active"><span class="page-link"><%= currentPage %></span></li>
-                <% if (users.length === 5) { %>
-                    <li class="page-item"><a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>">Next</a></li>
-                <% } %>
-            </ul>
-        </nav>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
-</div>
 
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <form id="confirmForm" method="POST" style="display: inline;">
+                        <button type="submit" class="btn" id="confirmButton">Confirm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script>
-document.querySelectorAll('.block-btn').forEach(button => {
-    button.addEventListener('click', async (e) => {
-        const userId = e.target.getAttribute('data-id');
-        const confirmAction = confirm("Are you sure you want to block/unblock this user?");
-        if (!confirmAction) return;
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript to handle modal content dynamically
+        const confirmModal = document.getElementById('confirmModal');
+        confirmModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const action = button.getAttribute('data-action'); // Form action URL
+            const message = button.getAttribute('data-message'); // Confirmation message
+            const actionType = button.getAttribute('data-action-type'); // 'block' or 'unblock'
 
-        const response = await fetch('/admin/blockCustomer', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: userId })
+            // Update the modal's content
+            const confirmMessage = document.getElementById('confirmMessage');
+            const confirmButton = document.getElementById('confirmButton');
+            const confirmForm = document.getElementById('confirmForm');
+
+            confirmMessage.textContent = message;
+            confirmForm.action = action;
+
+            // Style the confirm button based on the action type
+            if (actionType === 'block') {
+                confirmButton.className = 'btn btn-block';
+                confirmButton.textContent = 'Block';
+            } else {
+                confirmButton.className = 'btn btn-unblock';
+                confirmButton.textContent = 'Unblock';
+            }
         });
-
-        const result = await response.json();
-        alert(result.message);
-        location.reload();
-    });
-});
-</script>
+    </script>
+</body>
+</html>
