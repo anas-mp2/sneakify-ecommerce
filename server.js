@@ -36,13 +36,13 @@ app.use(express.static(path.join(__dirname,'public')));
 
 
 
-// app.get('/user/home', (req, res) => {
-//     res.redirect('/'); // Serve home.ejs located in views/user folder
-// });
+app.get('/user/home', (req, res) => {
+    res.redirect('/'); // Serve home.ejs located in views/user folder
+});
 
-// app.get('/user/signup',(req,res)=>{
-//     res.render('signup');
-// })
+app.get('/user/signup',(req,res)=>{
+    res.render('signup');
+})
 
 app.listen(process.env.PORT,()=>{
     console.log(`Your Server is running succesfully on port number ${process.env.PORT}`);

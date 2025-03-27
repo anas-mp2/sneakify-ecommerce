@@ -12,12 +12,12 @@
         body {
             background-color: #1e1e1e;
             color: #ffffff;
-            margin: 0; /* Remove default body margin */
+            margin: 0;
         }
         .table {
             color: #ffffff;
             width: 100%;
-            margin-bottom: 0; /* Remove any default margin */
+            margin-bottom: 0;
         }
         .table thead th {
             color: #cccccc;
@@ -29,9 +29,8 @@
             vertical-align: middle;
             padding: 15px;
         }
-        /* Ensure equal spacing between columns (4 columns now) */
         .table th, .table td {
-            width: 25%; /* 100% / 4 columns = 25% each */
+            width: 25%;
         }
         .btn-block {
             background-color: #ff0000;
@@ -54,36 +53,47 @@
             background-color: #007bff;
             border-color: #007bff;
         }
+        .pagination .page-item.disabled .page-link {
+            background-color: #2c2c2c;
+            color: #666;
+            border: 1px solid #444;
+            cursor: not-allowed;
+        }
         .input-group input {
             background-color: #2c2c2c !important;
             border: 1px solid #444;
+            color: #ffffff;
         }
-        /* Ensure flex-grow-1 takes full width with no padding/margin on the right */
+        .input-group .btn-search {
+            background-color: #007bff; /* Blue for Search button */
+            color: white;
+            border: none;
+        }
+        .input-group .btn-clear {
+            background-color: #6c757d; /* Gray for Clear button */
+            color: white;
+            border: none;
+        }
         .flex-grow-1 {
             padding: 0;
             margin: 0;
         }
-        /* Adjust container padding to add space on both left and right */
         .container-fluid.custom-container {
-            padding: 1.5rem 1.5rem 1.5rem 1.5rem; /* Add 1.5rem padding on both left and right */
+            padding: 1.5rem 1.5rem 1.5rem 1.5rem;
             margin-right: 0;
         }
-        /* Ensure table-responsive takes full width within the padded container */
         .table-responsive {
             width: 100%;
             margin-right: 0;
             padding-right: 0;
         }
-        /* Ensure the d-flex container takes full width */
         .d-flex {
             width: 100%;
             margin: 0;
         }
-        /* Ensure pagination respects the right padding */
         .pagination {
             margin-right: 0;
         }
-        /* Modal Styling */
         .modal-content {
             background-color: #2c2c2c;
             color: #ffffff;
@@ -114,9 +124,18 @@
             <%- include('../partials/admin/navbar') %>
             
             <div class="container-fluid custom-container">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control bg-dark text-white" placeholder="Search for User Name">
-                </div>
+                <!-- Search Bar with Clear Button -->
+                <form action="/admin/users" method="GET" class="input-group mb-3">
+                    <input type="text" 
+                           name="search" 
+                           class="form-control bg-dark text-white" 
+                           placeholder="Search for User Name or Email" 
+                           value="<%= searchQuery || '' %>">
+                    <button type="submit" class="btn btn-search">Search</button>
+                    <button type="button" 
+                            class="btn btn-clear" 
+                            onclick="window.location.href='/admin/users?page=1'">Clear</button>
+                </form>
                 
                 <div class="table-responsive">
                     <table class="table table-dark table-striped align-middle">
@@ -129,54 +148,72 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% users.forEach(user => { %>
+                            <% if (users && users.length > 0) { %>
+                                <% users.forEach(user => { %>
+                                    <tr>
+                                        <td>
+                                            <img src="<%= user.profilePicture || 'https://www.gravatar.com/avatar/' + user.gravatarHash + '?d=robohash&s=50' %>" 
+                                                 class="rounded-circle" 
+                                                 alt="User" 
+                                                 width="50" 
+                                                 height="50">
+                                        </td>
+                                        <td><%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'Unknown User') %></td>
+                                        <td><%= user.email || 'N/A' %></td>
+                                        <td>
+                                            <% if (user.isBlocked) { %>
+                                                <button type="button" class="btn btn-unblock btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    data-action="/admin/unblock-user/<%= user._id %>?page=<%= currentPage %>&search=<%= encodeURIComponent(searchQuery) %>"
+                                                    data-message="Are you sure you want to unblock <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
+                                                    data-action-type="unblock">
+                                                    UNBLOCK
+                                                </button>
+                                            <% } else { %>
+                                                <button type="button" class="btn btn-block btn-sm" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#confirmModal"
+                                                    data-action="/admin/block-user/<%= user._id %>?page=<%= currentPage %>&search=<%= encodeURIComponent(searchQuery) %>"
+                                                    data-message="Are you sure you want to block <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
+                                                    data-action-type="block">
+                                                    BLOCK
+                                                </button>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
                                 <tr>
-                                    <td>
-                                        <img src="<%= user.profilePicture || 'https://www.gravatar.com/avatar/' + user.gravatarHash + '?d=robohash&s=50' %>" 
-                                             class="rounded-circle" 
-                                             alt="User" 
-                                             width="50" 
-                                             height="50">
-                                    </td>
-                                    <td><%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'Unknown User') %></td>
-                                    <td><%= user.email || 'N/A' %></td>
-                                    <td>
-                                        <% if (user.isBlocked) { %>
-                                            <!-- Unblock Button -->
-                                            <button type="button" class="btn btn-unblock btn-sm" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#confirmModal"
-                                                data-action="/admin/unblock-user/<%= user.id %>"
-                                                data-message="Are you sure you want to unblock <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
-                                                data-action-type="unblock">
-                                                UNBLOCK
-                                            </button>
-                                        <% } else { %>
-                                            <!-- Block Button -->
-                                            <button type="button" class="btn btn-block btn-sm" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#confirmModal"
-                                                data-action="/admin/block-user/<%= user.id %>"
-                                                data-message="Are you sure you want to block <%= user.name || (user.email && typeof user.email === 'string' ? user.email.split('@')[0] : 'this user') %>?"
-                                                data-action-type="block">
-                                                BLOCK
-                                            </button>
-                                        <% } %>
-                                    </td>
+                                    <td colspan="4">No users found.</td>
                                 </tr>
-                            <% }) %>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
 
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-end">
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    </ul>
-                </nav>
+                <!-- Dynamic Pagination -->
+                <% if (totalPages > 1) { %>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-end">
+                            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                <a class="page-link" href="/admin/users?page=<%= currentPage - 1 %>&search=<%= encodeURIComponent(searchQuery) %>" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="/admin/users?page=<%= i %>&search=<%= encodeURIComponent(searchQuery) %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="/admin/users?page=<%= currentPage + 1 %>&search=<%= encodeURIComponent(searchQuery) %>" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                <% } %>
             </div>
         </div>
     </div>
@@ -204,15 +241,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // JavaScript to handle modal content dynamically
         const confirmModal = document.getElementById('confirmModal');
         confirmModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget; // Button that triggered the modal
-            const action = button.getAttribute('data-action'); // Form action URL
-            const message = button.getAttribute('data-message'); // Confirmation message
-            const actionType = button.getAttribute('data-action-type'); // 'block' or 'unblock'
+            const button = event.relatedTarget;
+            const action = button.getAttribute('data-action');
+            const message = button.getAttribute('data-message');
+            const actionType = button.getAttribute('data-action-type');
 
-            // Update the modal's content
             const confirmMessage = document.getElementById('confirmMessage');
             const confirmButton = document.getElementById('confirmButton');
             const confirmForm = document.getElementById('confirmForm');
@@ -220,7 +255,6 @@
             confirmMessage.textContent = message;
             confirmForm.action = action;
 
-            // Style the confirm button based on the action type
             if (actionType === 'block') {
                 confirmButton.className = 'btn btn-block';
                 confirmButton.textContent = 'Block';
