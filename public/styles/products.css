@@ -1,0 +1,153 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ffffff;
+    margin-bottom: 0;
+    table-layout: fixed;
+}
+
+.table th {
+    background-color: #2a2a2a;
+    color: #cccccc;
+    padding: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid #333;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #1e1e1e;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table tr:hover {
+    background-color: #292929;
+}
+
+/* Status Styling */
+.status-active::before {
+    content: "✔";
+    color: #00ff00;
+    margin-right: 5px;
+}
+
+.status-inactive::before {
+    content: "✖";
+    color: #ff0000;
+    margin-right: 5px;
+}
+
+/* Action Buttons */
+.btn-edit, .btn-delete {
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: none;
+    color: #ffffff;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    color: #007bff;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination .page-link {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border: 1px solid #444;
+    padding: 8px 12px;
+    margin: 5px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #2c2c2c;
+    color: #666;
+    border: 1px solid #444;
+    cursor: not-allowed;
+}
+
+/* Search Bar and Table Container */
+.input-group,
+.table-responsive {
+    width: 100%;
+    padding: 20px 20px 0 20px;
+    box-sizing: border-box;
+}
+
+/* Pagination Spacing */
+.pagination {
+    padding: 0 20px;
+}
+
+/* Form Styling */
+.form-control, .form-select {
+    background-color: #2c2c2c !important;
+    border: 1px solid #444 !important;
+    color: #ffffff !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #2c2c2c !important;
+    border-color: #007bff !important;
+    box-shadow: none !important;
+}
+
+.form-label {
+    color: #cccccc;
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+
+.modal-header {
+    border-bottom: 1px solid #444;
+}
+
+.modal-footer {
+    border-top: 1px solid #444;
+}
+
+.modal-title {
+    color: #cccccc;
+}
+
+.btn-cancel {
+    background-color: #444;
+    color: #ffffff;
+}
+
+.btn-cancel:hover {
+    background-color: #555;
+}

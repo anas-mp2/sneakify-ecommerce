@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require("mongoose");
 
-// Create a schema for the Product
-const productSchema = new Schema({
-    productName: {
+const productSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true
     },
@@ -15,47 +13,39 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    category: {
-        type: Schema.Types.ObjectId,
-        ref: "Category",
-        required: true
-    },
-    regularPrice: {
+    price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0
     },
-    salePrice: {
+    stockCount: {
         type: Number,
-        required: true
-    },
-    productOffer: {
-        type: Number,
-        default: 0
-    },
-    quantity: {
-        type: Number,
-        required: true
-    },
-    color: {
-        type: String,
-        required: true
-    },
-    productImage: {
-        type: [String], // Fixed typo: "Strring" to "String"
-        required: true
-    },
-    isBlocked: {
-        type: Boolean,
-        default: false
+        required: true,
+        min: 0
     },
     status: {
         type: String,
-        enum: ["Available", "out of stock", "Discontinued"],
+        enum: ["Active", "Inactive"],
+        default: "Active"
+    },
+    images: {
+        type: [String], // Array of strings to store image paths
         required: true,
-        default: 'Available'
+        validate: [arrayLimitImages, "At least 3 images are required"]
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false // For soft delete
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
     }
-}, { timestamps: true });
+});
 
-// Create and export the Product model
-const Product = mongoose.model("Product", productSchema);
-module.exports = Product;
+// Validator to ensure at least 3 images
+function arrayLimitImages(val) {
+    return val.length >= 3;
+}
+
+module.exports = mongoose.model("Product", productSchema);

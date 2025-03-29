@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname,'public')));
 
 
 app.get('/user/home', (req, res) => {
-    res.redirect('/'); // Serve home.ejs located in views/user folder
+    res.redirect('/'); 
 });
 
 app.get('/user/signup',(req,res)=>{

@@ -5,7 +5,7 @@ const bcrypt=require('bcrypt');
 
 const loadLoginPage = async (req, res) => {
     try {
-        return res.render("login", { message: "" }); // Pass an empty message initially
+        return res.render("login", { message: "" }); 
     } catch (error) {
         console.log("Unable to load login page");
         res.status(500).send("Server error");
@@ -234,7 +234,7 @@ const forgotPasswordOtp=async (req,res)=>{
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.NODEMAILER_EMAIL,  // Set in .env file
+                user: process.env.NODEMAILER_EMAIL, 
                 pass: process.env.NODEMAILER_PASSWORD
             }
         });
@@ -266,7 +266,7 @@ const forgotPasswordOtp=async (req,res)=>{
 const verifyForgotPasswordOtp=async (req,res)=>{
     try{
         var {otp}=req.body;
-        // console.log(otp.toString().trim());
+       
         otp=otp.join("")
         console.log(otp);
         if(otp===",,,,,"){
@@ -309,7 +309,7 @@ const resendForgotPasswordOtp= async(req,res)=>{
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.NODEMAILER_EMAIL,  // Set in .env file
+                user: process.env.NODEMAILER_EMAIL,  
                 pass: process.env.NODEMAILER_PASSWORD
             }
         });
@@ -337,29 +337,7 @@ const resendForgotPasswordOtp= async(req,res)=>{
         res.render("pageNotFound");
     } ;};
 
-    // const loginAfterPasswordChange = async (req, res) => {
-    //     try {
-    //         const { password, cpassword } = req.body;
-    //         console.log("Entered Password:", password);
-    //         console.log("Entered Confirm Password:", cpassword);
-    
-    //         if (password === cpassword) {
-    //             // Hash the password
-    //             const saltRounds = 10;
-    //             const hashedPassword = await bcrypt.hash(password, saltRounds);
-    //             console.log("Hashed Password:", hashedPassword);
-                
-    //             req.session.password=hashedPassword;
-    //             // Now, you can store `hashedPassword` in the database
-    
-    //             res.render("login",{message:""});
-    //         } else {
-    //             res.send("Passwords do not match!");
-    //         }
-    //     } catch (error) {
-    //         console.log("Error:", error);
-    //     }
-    // };
+   
     const changePassword = async (req, res) => {
         try {
             const { password, cpassword } = req.body;
@@ -375,12 +353,11 @@ const resendForgotPasswordOtp= async(req,res)=>{
                 return res.render("change-password", { message: "User not found" });
             }
     
-            // Hash the new password before saving
             const hashedPassword = await bcrypt.hash(password, 10);
             user.password = hashedPassword;
             await user.save();
     
-            req.session.destroy(); // Clear session after password reset
+            req.session.destroy(); 
     
             return res.render("login", { message: "Password changed successfully. Please log in." });
         } catch (error) {

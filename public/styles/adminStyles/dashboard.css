@@ -1,18 +1,25 @@
+/* General body styling */
 body {
     display: flex;
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background */
 }
 
+/* Sidebar styling */
 .sidebar {
     width: 250px;
-    height: 100vh;
+    min-height: 100vh; /* Full viewport height */
     background-color: #1e1e1e;
     color: white;
-    padding-top: 20px;
-    position: fixed;
+    position: fixed; /* Fixed position to stay on the left */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Below navbar but above content */
+    padding-top: 70px; /* Offset for navbar height */
 }
 
+/* Sidebar links */
 .sidebar a {
     color: white;
     text-decoration: none;
@@ -24,20 +31,121 @@ body {
     background-color: #333;
 }
 
+/* Specific styling for logout link */
 .logout {
     color: red;
 }
 
+/* Main content styling */
 .main-content {
     flex-grow: 1;
     background-color: #121212;
     color: white;
-    padding: 20px;
-    margin-left: 250px;
-    width: 100%;
+    margin-left: 250px; /* Offset for fixed sidebar width */
+    margin-top: 70px; /* Offset for fixed navbar height */
+    width: calc(100% - 250px); /* Total width minus sidebar width */
+    min-height: 100vh; /* Ensure it takes full height */
+    padding: 0; /* Remove default padding to allow container-fluid to control spacing */
 }
 
+/* Ensure container-fluid stretches to full width of main-content */
+.container-fluid.custom-container {
+    padding: 0; /* Remove padding to allow child elements to control spacing */
+    width: 100%;
+    margin: 0;
+}
+
+/* Navbar styling */
 .navbar {
     background-color: #1e1e1e;
     padding: 10px 20px;
+    position: fixed; /* Fixed position at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1001; /* Above sidebar and content */
+    color: white;
+    height: 60px; /* Explicit height for consistency */
+}
+
+/* Button styling */
+.btn-block {
+    background-color: #dc3545; /* Red for BLOCK button */
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-block:hover {
+    background-color: #c82333;
+}
+
+/* Search bar and Add Category button (for shared use across pages) */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group input {
+    background-color: #2c2c2c;
+    color: white;
+    border: 1px solid #444;
+}
+
+.input-group .btn-search {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+.input-group .btn-clear {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-add-category {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-add-category:hover {
+    background-color: #218838;
+}
+
+/* Modal styling */
+.modal-content {
+    background-color: #2c2c2c;
+    color: white;
+    border: 1px solid #444;
+}
+
+.modal-header {
+    border-bottom: 1px solid #444;
+}
+
+.modal-footer {
+    border-top: 1px solid #444;
+}
+
+.modal-title {
+    color: #cccccc;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
 }

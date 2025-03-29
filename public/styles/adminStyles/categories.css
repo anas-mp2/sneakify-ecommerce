@@ -10,7 +10,7 @@ body {
     border-collapse: collapse;
     color: #ffffff;
     margin-bottom: 0;
-    table-layout: fixed; /* Ensure columns stretch evenly without overflow */
+    table-layout: fixed;
 }
 
 .table th {
@@ -28,9 +28,9 @@ body {
     text-align: center;
     vertical-align: middle;
     background-color: #1e1e1e;
-    overflow: hidden; /* Prevent content from overflowing */
-    text-overflow: ellipsis; /* Add ellipsis for long text */
-    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table tr:hover {
@@ -38,23 +38,20 @@ body {
 }
 
 /* Action Buttons */
-.btn-block, .btn-unblock {
-    padding: 5px 15px;
+.btn-edit, .btn-delete {
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-size: 16px;
 }
 
-.btn-block {
-    background-color: #ff0000;
-    color: white;
+.btn-edit {
+    color: #007bff;
 }
 
-.btn-unblock {
-    background-color: #00ff00;
-    color: black;
+.btn-delete {
+    color: #ff0000;
 }
 
 /* Pagination */
@@ -91,11 +88,11 @@ body {
 .input-group,
 .table-responsive {
     width: 100%;
-    padding: 20px 20px 0 20px; /* Small gaps on left and right */
-    box-sizing: border-box; /* Ensure padding is included in width */
+    padding: 20px 20px 0 20px;
+    box-sizing: border-box;
 }
 
 /* Pagination spacing */
 .pagination {
-    padding: 0 20px; /* Match the padding of table and search bar */
+    padding: 0 20px;
 }
