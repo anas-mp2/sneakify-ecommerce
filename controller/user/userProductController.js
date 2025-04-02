@@ -1,83 +1,74 @@
-// controller/user/userProductController.js
-const Product = require('../../model/productSchema'); // Adjust path based on your structure
+const Product = require('../../model/productSchema');
+const Category = require('../../model/categorySchema');
 
-const getProducts = async (req, res) => {
-  try {
-    const { search, sort, category, minPrice, maxPrice, brand } = req.query;
+// Get products for the shop page with filtering and sorting
+const getShopProducts = async (req, res) => {
+    try {
+        const { search, category, minPrice, maxPrice, brand, sort } = req.query;
 
-    // Build query object
-    let query = {
-      isDeleted: false, // Hide soft-deleted products
-      status: 'Active'  // Hide inactive products
-    };
+        // Build the query object
+        let query = { isDeleted: false };
 
-    // Search functionality
-    if (search) {
-      query.name = { $regex: search, $options: 'i' }; // Case-insensitive search
+        // Search by product name
+        if (search) {
+            query.name = { $regex: search, $options: 'i' }; // Case-insensitive search
+        }
+
+        // Filter by category
+        if (category) {
+            query.category = category;
+        }
+
+        // Filter by price range
+        if (minPrice || maxPrice) {
+            query.price = {};
+            if (minPrice) query.price.$gte = Number(minPrice);
+            if (maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        // Filter by brand
+        if (brand) {
+            query.brand = brand;
+        }
+
+        // Sorting
+        let sortOption = {};
+        if (sort === 'price-low-to-high') {
+            sortOption.price = 1;
+        } else if (sort === 'price-high-to-low') {
+            sortOption.price = -1;
+        } else if (sort === 'a-z') {
+            sortOption.name = 1;
+        } else if (sort === 'z-a') {
+            sortOption.name = -1;
+        } else if (sort === 'new-arrivals') {
+            sortOption.createdAt = -1;
+        }
+
+        // Fetch products
+        const products = await Product.find(query).sort(sortOption);
+
+        // Fetch categories and brands for filters
+        const categories = await Category.find();
+        const brands = await Product.distinct('brand', { isDeleted: false });
+
+        res.render('shop', {
+            products,
+            categories,
+            brands,
+            search: search || '',
+            category: category || '',
+            minPrice: minPrice || '',
+            maxPrice: maxPrice || '',
+            brand: brand || '',
+            sort: sort || ''
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server Error');
     }
-
-    // Filter by category (assuming you'll add this field)
-    if (category) {
-      query.category = category;
-    }
-
-    // Filter by price range
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
-    }
-
-    // Filter by brand
-    if (brand) {
-      query.brand = brand;
-    }
-
-    // Sorting logic
-    let sortOption = {};
-    switch (sort) {
-      case 'price-low-to-high':
-        sortOption.price = 1;
-        break;
-      case 'price-high-to-low':
-        sortOption.price = -1;
-        break;
-      case 'a-z':
-        sortOption.name = 1;
-        break;
-      case 'z-a':
-        sortOption.name = -1;
-        break;
-      case 'new-arrivals':
-        sortOption.updatedAt = -1;
-        break;
-      default:
-        sortOption.updatedAt = -1; // Default: newest first
-    }
-
-    // Fetch products
-    const products = await Product.find(query).sort(sortOption);
-
-    // Fetch distinct categories and brands for dropdowns
-    const categories = await Product.distinct('category', { isDeleted: false, status: 'Active' });
-    const brands = await Product.distinct('brand', { isDeleted: false, status: 'Active' });
-
-    // Render EJS view with products
-    res.render('shop', {
-      products,
-      categories,
-      brands,
-      search: search || '',
-      sort: sort || '',
-      category: category || '',
-      minPrice: minPrice || '',
-      maxPrice: maxPrice || '',
-      brand: brand || ''
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server Error');
-  }
 };
 
-module.exports = { getProducts };
+module.exports = {
+    getShopProducts // Only export user-facing functions
+};

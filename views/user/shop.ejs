@@ -6,32 +6,127 @@
     <title>Shop - Shoe Store</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
+            margin: 0;
         }
+
+        /* Navbar Styles from Login Page */
         .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .navbar-brand img {
-            height: 40px;
+
+        .logo img {
+            width: 70px;
+            height: 70px;
+            margin-left: 30px;
         }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* This aligns the items to the right */
+        }
+
+        .nav-items a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        .nav-items a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .search input {
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search button {
+            padding: 6px;
+            border-radius: 5px;
+            background-color: #DB4444;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search button:hover {
+            background-color: #DB4444;
+        }
+
+        /* Main Content Styles */
         .search-bar {
             max-width: 500px;
-            margin: 20px 0;
+            margin: 20px auto;
+            display: flex;
+            gap: 10px;
         }
+
+        .search-bar .btn-primary {
+            background-color: #DB4444;
+            border-color: #DB4444;
+        }
+
+        .search-bar .btn-primary:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
         .filter-section {
             background-color: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 250px; /* Adjusted to match the screenshot */
         }
+
         .filter-section h5 {
             font-weight: bold;
             margin-bottom: 15px;
+            font-size: 1.25rem;
         }
+
+        .filter-section .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-section .form-select,
+        .filter-section .form-control {
+            font-size: 0.9rem;
+            padding: 5px;
+        }
+
+        .filter-section .row {
+            margin: 0;
+        }
+
+        .filter-section .col {
+            padding: 0 5px;
+        }
+
         .product-card {
             background-color: #fff;
             border: 1px solid #ddd;
@@ -39,83 +134,173 @@
             padding: 15px;
             text-align: center;
             transition: transform 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
+
         .product-card:hover {
             transform: scale(1.05);
         }
+
         .product-card img {
-            max-height: 200px;
+            max-height: 150px;
             object-fit: cover;
             border-radius: 8px;
+            margin: 0 auto;
         }
+
         .product-card h6 {
             font-size: 1.1rem;
             margin: 10px 0;
         }
+
         .product-card p {
             color: #666;
+            margin: 5px 0;
         }
+
         .btn-primary {
-            background-color: #dc3545;
-            border-color: #dc3545;
+            background-color: #DB4444;
+            border-color: #DB4444;
         }
+
         .btn-primary:hover {
             background-color: #c82333;
             border-color: #c82333;
         }
+
         .btn-outline-secondary {
             border-color: #ddd;
             color: #666;
         }
-        .footer {
-            background-color: #000;
-            color: #fff;
-            padding: 40px 0;
-            margin-top: 40px;
+
+        .sort-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
         }
-        .footer a {
-            color: #fff;
-            text-decoration: none;
+
+        .sort-section .form-select {
+            width: auto;
         }
-        .footer a:hover {
-            text-decoration: underline;
+
+        /* Footer Styles from Login Page */
+        footer {
+            background-color: #333; 
+            color: white;
+            padding: 40px 80px;
+            font-family: Arial, sans-serif;
         }
-        .footer h5 {
-            font-weight: bold;
-            margin-bottom: 15px;
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: flex-start; /* Ensures all content aligns at the top */
+        }
+
+        .footer-section {
+            width: 18%;
+            display: flex;
+            flex-direction: column;
+            align-items: start; /* Aligns everything to the left */
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .footer-section p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .subscribe-box {
+            display: flex;
+            align-items: center;
+            max-width: 250px; /* Adjust width to match text above */
+            border: 1px solid white;
+            border-radius: 5px;
+            padding: 5px;
+            overflow: hidden;
+        }
+
+        .subscribe-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 10px;
+        }
+
+        .subscribe-box button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 10px 15px;
+        }
+
+        .imgdiv {
+            padding-left: 6px;
+            padding-top: 7px;
+        }
+
+        #qr-img {
+            width: 60px;
+            height: 60px;
+        }
+
+        #googleplay-img {
+            height: 20px;
+            width: 60%;
+        }
+
+        #appstore-img {
+            height: 20px;
+            width: 60%;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+        }
+
+        .qr-container img {
+            width: 100px;
+            margin-bottom: 5px;
+        }
+
+        .social-icons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-icons i {
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 15px;
+            margin-left: 7px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 12px;
+            border-top: 1px solid white;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/images/logo.png" alt="Shoe Store Logo">
-            </a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">Sign Up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">What are you looking for? 🔍</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <!-- Header -->
+    <%- include('../partials/user/header') %>
 
     <!-- Main Content -->
     <div class="container my-5">
@@ -138,7 +323,7 @@
                             <select name="category" id="category" class="form-select">
                                 <option value="">All Categories</option>
                                 <% categories.forEach(cat => { %>
-                                    <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+                                    <option value="<%= cat.brand %>" <%= category === cat.brand ? 'selected' : '' %>><%= cat.brand %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -178,8 +363,7 @@
             <!-- Product Listing -->
             <div class="col-md-9">
                 <!-- Sorting -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5>Products</h5>
+                <div class="sort-section">
                     <form action="/products" method="GET" class="d-flex">
                         <select name="sort" class="form-select w-auto me-2" onchange="this.form.submit()">
                             <option value="">Sort By</option>
@@ -221,42 +405,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    <h5>Exclusive</h5>
-                    <p>Subscribe</p>
-                    <p>Get 10% off your first order</p>
-                    <input type="email" class="form-control" placeholder="Enter your email">
-                </div>
-                <div class="col-md-3">
-                    <h5>Support</h5>
-                    <p>111 Bijoy sarani, Dhaka, DH 1515, Bangladesh.</p>
-                    <p>exclusive@gmail.com</p>
-                    <p>+88015-88888-9999</p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Account</h5>
-                    <p><a href="#">My Account</a></p>
-                    <p><a href="#">Login / Register</a></p>
-                    <p><a href="#">Cart</a></p>
-                    <p><a href="#">Wishlist</a></p>
-                    <p><a href="#">Shop</a></p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Quick Link</h5>
-                    <p><a href="#">Privacy Policy</a></p>
-                    <p><a href="#">Terms Of Use</a></p>
-                    <p><a href="#">FAQ</a></p>
-                    <p><a href="#">Contact</a></p>
-                </div>
-            </div>
-            <div class="text-center mt-4">
-                <p>&copy; Copyright Shoe Store 2025. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <%- include('../partials/user/footer') %>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
