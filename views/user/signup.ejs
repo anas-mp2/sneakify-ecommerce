@@ -32,10 +32,10 @@
                         <p style="color: red;"><% if (message) { %><%= message %><% } %></p>
                         <div class="form-actions">
                             <button type="submit" class="login-button">Signup</button>
-                            <button type="button" class="google-signup-button">
+                            <a href="/auth/google/logout" class="google-signup-button">
                                 <img src="/images/Google_Icons-09-512.webp" class="google-logo" alt=""> 
                                 Sign Up With Google
-                            </button>                            
+                            </a>                        
                         </div>
                     </form>
                     <p>Already have an account? <a href="/user/login" id="login">Log in</a></p>

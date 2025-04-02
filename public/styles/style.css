@@ -188,11 +188,11 @@ p {
 #login:hover{
     text-decoration: underline;
 }
-.google-signup-button {
+/* .google-signup-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color:#fafafa; /* Google's brand color */
+    background-color:#fafafa; 
     color:black;
     border: none;
     padding: 10px 20px;
@@ -204,16 +204,37 @@ p {
   }
   
   .google-signup-button:hover {
-    background-color: #357ABD; /* Darker shade for hover effect */
+    background-color: #357ABD; 
   }
   
   .google-logo {
     width: 20px;
     height: 20px;
     margin-right: 10px;
-  }
+  } */
+  .google-signup-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+}
+
+.google-signup-button:hover {
+    background-color: #f1f1f1;
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
 footer {
-    background-color: #333; /* Adjusted to match the screenshot */
+    background-color: #333; 
     color: white;
     padding: 40px 80px;
     font-family: Arial, sans-serif;

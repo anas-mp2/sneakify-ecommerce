@@ -37,6 +37,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false // For soft delete
     },
+    category:{
+        type:String,
+        required:true
+    },
     updatedAt: {
         type: Date,
         default: Date.now

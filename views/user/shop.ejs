@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - Shoe Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar-brand img {
+            height: 40px;
+        }
+        .search-bar {
+            max-width: 500px;
+            margin: 20px 0;
+        }
+        .filter-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .filter-section h5 {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+        .product-card img {
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .product-card h6 {
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+        .product-card p {
+            color: #666;
+        }
+        .btn-primary {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-primary:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+        .btn-outline-secondary {
+            border-color: #ddd;
+            color: #666;
+        }
+        .footer {
+            background-color: #000;
+            color: #fff;
+            padding: 40px 0;
+            margin-top: 40px;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .footer h5 {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" alt="Shoe Store Logo">
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">What are you looking for? 🔍</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Search Bar -->
+        <form action="/products" method="GET" class="search-bar mx-auto d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="<%= search %>">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="/products" class="btn btn-outline-secondary ms-2">Clear</a>
+        </form>
+
+        <div class="row">
+            <!-- Filters -->
+            <div class="col-md-3">
+                <div class="filter-section">
+                    <h5>Filters</h5>
+                    <form action="/products" method="GET">
+                        <!-- Category Filter -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="category" id="category" class="form-select">
+                                <option value="">All Categories</option>
+                                <% categories.forEach(cat => { %>
+                                    <option value="<%= cat %>" <%= category === cat ? 'selected' : '' %>><%= cat %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div class="mb-3">
+                            <label class="form-label">Price Range</label>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="number" name="minPrice" class="form-control" placeholder="Min" value="<%= minPrice %>">
+                                </div>
+                                <div class="col">
+                                    <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="<%= maxPrice %>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Brand Filter -->
+                        <div class="mb-3">
+                            <label for="brand" class="form-label">Brand</label>
+                            <select name="brand" id="brand" class="form-select">
+                                <option value="">All Brands</option>
+                                <% brands.forEach(brand => { %>
+                                    <option value="<%= brand %>" <%= brand === brand ? 'selected' : '' %>><%= brand %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+
+                        <!-- Hidden fields to preserve other query params -->
+                        <input type="hidden" name="search" value="<%= search %>">
+                        <input type="hidden" name="sort" value="<%= sort %>">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Product Listing -->
+            <div class="col-md-9">
+                <!-- Sorting -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5>Products</h5>
+                    <form action="/products" method="GET" class="d-flex">
+                        <select name="sort" class="form-select w-auto me-2" onchange="this.form.submit()">
+                            <option value="">Sort By</option>
+                            <option value="price-low-to-high" <%= sort === 'price-low-to-high' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="price-high-to-low" <%= sort === 'price-high-to-low' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="a-z" <%= sort === 'a-z' ? 'selected' : '' %>>A - Z</option>
+                            <option value="z-a" <%= sort === 'z-a' ? 'selected' : '' %>>Z - A</option>
+                            <option value="new-arrivals" <%= sort === 'new-arrivals' ? 'selected' : '' %>>New Arrivals</option>
+                        </select>
+                        <!-- Hidden fields to preserve other query params -->
+                        <input type="hidden" name="search" value="<%= search %>">
+                        <input type="hidden" name="category" value="<%= category %>">
+                        <input type="hidden" name="minPrice" value="<%= minPrice %>">
+                        <input type="hidden" name="maxPrice" value="<%= maxPrice %>">
+                        <input type="hidden" name="brand" value="<%= brand %>">
+                    </form>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="row">
+                    <% if (products.length > 0) { %>
+                        <% products.forEach(product => { %>
+                            <div class="col-md-4 mb-4">
+                                <div class="product-card">
+                                    <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="img-fluid">
+                                    <h6><%= product.name %></h6>
+                                    <p class="text-muted"><%= product.brand %></p>
+                                    <p>$<%= product.price %></p>
+                                    <a href="/products/<%= product._id %>" class="btn btn-primary">View Details</a>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No products found.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Exclusive</h5>
+                    <p>Subscribe</p>
+                    <p>Get 10% off your first order</p>
+                    <input type="email" class="form-control" placeholder="Enter your email">
+                </div>
+                <div class="col-md-3">
+                    <h5>Support</h5>
+                    <p>111 Bijoy sarani, Dhaka, DH 1515, Bangladesh.</p>
+                    <p>exclusive@gmail.com</p>
+                    <p>+88015-88888-9999</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Account</h5>
+                    <p><a href="#">My Account</a></p>
+                    <p><a href="#">Login / Register</a></p>
+                    <p><a href="#">Cart</a></p>
+                    <p><a href="#">Wishlist</a></p>
+                    <p><a href="#">Shop</a></p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Link</h5>
+                    <p><a href="#">Privacy Policy</a></p>
+                    <p><a href="#">Terms Of Use</a></p>
+                    <p><a href="#">FAQ</a></p>
+                    <p><a href="#">Contact</a></p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p>&copy; Copyright Shoe Store 2025. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

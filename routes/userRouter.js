@@ -2,6 +2,7 @@ const express=require('express');
 const router=express.Router();
 const passport=require('passport');
 const userController=require('../controller/user/userController');
+const userProductController=require('../controller/user/userProductController');
 
 
 
@@ -28,8 +29,11 @@ router.post('/forgot-password-otp',userController.forgotPasswordOtp)
 
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-    res.redirect('/');
+    res.json("hello all");
 });
 
+router.get('/auth/google/logout', userController.logout);
+
+router.get('/products', userProductController.getProducts);
 
 module.exports=router; 
