@@ -100,7 +100,7 @@
                                             <td><%= product.name %></td>
                                             <td><%= product.brand %></td>
                                             <td>₹<%= product.price %></td>
-                                            <td><%= product.category %></td>
+                                            <td><%= product.category.description || 'N/A' %></td> <!-- Updated to show category description -->
                                             <td><%= product.status %></td>
                                             <td>
                                                 <a href="/admin/products/edit/<%= product._id %>" class="btn btn-sm btn-warning">Edit</a>

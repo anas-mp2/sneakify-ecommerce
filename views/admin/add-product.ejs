@@ -124,8 +124,15 @@
                             <label for="category" class="form-label text-white">Category</label>
                             <select class="form-select" id="category" name="category" required>
                                 <% categories.forEach(category => { %>
-                                    <option value="<%= category.brand %>"><%= category.brand %></option>
+                                    <option value="<%= category._id %>"><%= category.description || 'N/A' %></option>
                                 <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label text-white">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
                             </select>
                         </div>
                         <div class="mb-3 image-section">

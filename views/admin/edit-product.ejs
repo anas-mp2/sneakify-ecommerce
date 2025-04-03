@@ -101,7 +101,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label text-white">Description</label>
-                            <textarea class="form-control" id="description" name="description" required><%= product.description %></textarea>
+                            <textarea class="form-control" id="description" name="description" required><%= product.description || '' %></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="brand" class="form-label text-white">Brand</label>
@@ -112,8 +112,8 @@
                             <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" value="<%= product.price %>" required>
                         </div>
                         <div class="mb-3">
-                            <label for="stockCount" class="form-label text-white">Stock Count</label>
-                            <input type="number" class="form-control" id="stockCount" name="stockCount" min="0" value="<%= product.stockCount %>" required>
+                            <label for="stock" class="form-label text-white">Stock</label> <!-- Changed to stock -->
+                            <input type="number" class="form-control" id="stock" name="stock" min="0" value="<%= product.stock %>" required> <!-- Changed to stock -->
                         </div>
                         <div class="mb-3">
                             <label for="status" class="form-label text-white">Status</label>
@@ -126,7 +126,7 @@
                             <label for="category" class="form-label text-white">Category</label>
                             <select class="form-select" id="category" name="category" required>
                                 <% categories.forEach(category => { %>
-                                    <option value="<%= category.brand %>" <%= product.category === category.brand ? 'selected' : '' %>><%= category.brand %></option>
+                                    <option value="<%= category._id %>" <%= product.category._id.toString() === category._id.toString() ? 'selected' : '' %>><%= category.description || 'N/A' %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -157,48 +157,47 @@
     <script>
         const imageInput = document.getElementById('images');
         const imagePreview = document.getElementById('imagePreview');
-        const form = document.getElementById('addProductForm'); // Use 'editProductForm' in edit-product.ejs
+        const form = document.getElementById('editProductForm');
         let croppers = [];
         let croppedBlobs = [];
-    
+
         imageInput.addEventListener('change', (event) => {
             const files = event.target.files;
             imagePreview.innerHTML = ''; // Clear previous previews
             croppers = [];
             croppedBlobs = [];
-    
-            // Adjust the minimum image check based on the file (add or edit)
-            const minImages = form.id === 'addProductForm' ? 3 : 0; // 3 for add, 0 for edit (optional)
-            if (files.length > 0 && files.length < 3 && form.id === 'addProductForm') {
-                alert('Please upload at least 3 images.');
-                imageInput.value = ''; // Clear the input
+
+            // Minimum 3 images only if uploading new ones (optional for edit)
+            if (files.length > 0 && files.length < 3) {
+                alert('Please upload at least 3 images if updating images.');
+                imageInput.value = '';
                 return;
             }
-    
+
             Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imgContainer = document.createElement('div');
                     imgContainer.className = 'cropper-container';
-    
+
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.className = 'image-preview';
                     img.id = `image-${index}`;
-                    img.style.width = '100%'; // Ensure the image takes the full width of the container
+                    img.style.width = '100%';
                     imgContainer.appendChild(img);
-    
+
                     const cropButton = document.createElement('button');
                     cropButton.type = 'button';
                     cropButton.className = 'btn btn-primary';
                     cropButton.textContent = 'Crop Image';
-                    cropButton.style.marginTop = '10px'; // Add spacing between the image and the button
-                    cropButton.style.alignSelf = 'flex-start'; // Align the button to the left
+                    cropButton.style.marginTop = '10px';
+                    cropButton.style.alignSelf = 'flex-start';
                     cropButton.addEventListener('click', () => cropImage(index));
                     imgContainer.appendChild(cropButton);
-    
+
                     imagePreview.appendChild(imgContainer);
-    
+
                     const cropper = new Cropper(img, {
                         aspectRatio: 1,
                         viewMode: 1,
@@ -210,7 +209,7 @@
                 reader.readAsDataURL(file);
             });
         });
-    
+
         function cropImage(index) {
             const cropper = croppers[index];
             if (cropper) {
@@ -223,7 +222,7 @@
                 }, 'image/jpeg');
             }
         }
-    
+
         form.addEventListener('submit', (event) => {
             if (imageInput.files.length > 0) {
                 if (croppedBlobs.length !== imageInput.files.length || croppedBlobs.some(blob => !blob)) {
@@ -231,7 +230,7 @@
                     alert('Please crop all images before submitting.');
                     return;
                 }
-    
+
                 const dataTransfer = new DataTransfer();
                 croppedBlobs.forEach((blob, index) => {
                     const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });

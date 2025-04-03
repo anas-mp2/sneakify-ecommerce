@@ -7,7 +7,8 @@ const { upload, processImages } = require('../../middlewares/multerConfig');
 // Get all products
 const getProducts = async (req, res) => {
     try {
-        const products = await Product.find({ isDeleted: false });
+        const products = await Product.find({ isDeleted: false })
+            .populate('category'); // Populate the category field
         res.render('admin-product', { products });
     } catch (error) {
         console.error(error);
@@ -18,7 +19,7 @@ const getProducts = async (req, res) => {
 // Render add product page
 const getAddProduct = async (req, res) => {
     try {
-        const categories = await Category.find();
+        const categories = await Category.find({ isDeleted: false });
         res.render('add-product', { 
             categories,
             message: null
@@ -28,13 +29,12 @@ const getAddProduct = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-console.log('Product model:', Product); // Debug the Product variable
 
 const addProduct = async (req, res) => {
     try {
         console.log('req.body:', req.body);
         console.log('req.files:', req.files);
-        const { name, brand, price, stock, category } = req.body;
+        const { name, description, brand, price, stock, category, status } = req.body;
 
         if (!stock || isNaN(stock)) {
             const categories = await Category.find({ isDeleted: false });
@@ -52,7 +52,7 @@ const addProduct = async (req, res) => {
             });
         }
 
-        const categoryDoc = await Category.findOne({ brand: category });
+        const categoryDoc = await Category.findById(category);
         console.log('Category found:', categoryDoc);
         if (!categoryDoc) {
             const categories = await Category.find({ isDeleted: false });
@@ -67,10 +67,12 @@ const addProduct = async (req, res) => {
 
         const product = new Product({
             name,
+            description, // Added description
             brand,
             price: parseFloat(price),
             stock: parseInt(stock, 10),
             category: categoryDoc._id,
+            status,
             images: processedImagePaths
         });
 
@@ -86,6 +88,7 @@ const addProduct = async (req, res) => {
         });
     }
 };
+
 // Render edit product page
 const getEditProduct = async (req, res) => {
     try {
@@ -105,15 +108,29 @@ const getEditProduct = async (req, res) => {
 // Update product
 const editProduct = async (req, res) => {
     try {
-        const { name, description, brand, price, stockCount, status, category } = req.body;
+        const { name, description, brand, price, stock, status, category } = req.body; // Changed stockCount to stock
         const product = await Product.findById(req.params.id);
+
+        if (!product) {
+            return res.status(404).send('Product not found');
+        }
+
+        // Validate required fields
+        if (!name || !brand || !price || !stock || !status || !category) {
+            const categories = await Category.find();
+            return res.render('edit-product', {
+                product,
+                categories,
+                message: 'All fields except description are required'
+            });
+        }
 
         // Update basic fields
         product.name = name;
-        product.description = description;
+        product.description = description || product.description; // Optional
         product.brand = brand;
-        product.price = price;
-        product.stockCount = stockCount;
+        product.price = parseFloat(price);
+        product.stock = parseInt(stock, 10); // Changed stockCount to stock
         product.status = status;
         product.category = category;
 
@@ -129,26 +146,33 @@ const editProduct = async (req, res) => {
             }
 
             // Delete old images
-            product.images.forEach(image => {
+            for (const image of product.images) {
                 const imagePath = path.join(__dirname, '../../public', image);
                 if (fs.existsSync(imagePath)) {
                     fs.unlinkSync(imagePath);
                 }
-            });
+            }
 
             // Process and save new images
             const processedImagePaths = await processImages(req.files);
+            if (!processedImagePaths || processedImagePaths.length === 0) {
+                throw new Error('Image processing failed');
+            }
             product.images = processedImagePaths;
         }
 
         await product.save();
-        res.redirect('/admin/products'); // Redirect to product list
+        res.redirect('/admin/products');
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
+        console.error('Edit product error:', error.message, error.stack);
+        const categories = await Category.find();
+        res.status(500).render('edit-product', {
+            product: await Product.findById(req.params.id) || {},
+            categories,
+            message: `An error occurred while updating the product: ${error.message}. Please try again.`
+        });
     }
 };
-
 // Soft delete product
 const deleteProduct = async (req, res) => {
     try {
