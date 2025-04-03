@@ -5,16 +5,32 @@ const getShopProducts = async (req, res) => {
     try {
         const { search, category, minPrice, maxPrice, brand, sort, error } = req.query;
 
-        let query = { isDeleted: false };
-        if (search) query.name = { $regex: search, $options: 'i' };
-        if (category) query.category = category;
+        // Base query with isDeleted and status filters
+        let query = { isDeleted: false, status: "Active" }; // Add status: "Active" here
+
+        // Apply search filter if provided
+        if (search) {
+            query.name = { $regex: search, $options: 'i' };
+        }
+
+        // Apply category filter if provided
+        if (category) {
+            query.category = category;
+        }
+
+        // Apply price range filter if provided
         if (minPrice || maxPrice) {
             query.price = {};
             if (minPrice) query.price.$gte = Number(minPrice);
             if (maxPrice) query.price.$lte = Number(maxPrice);
         }
-        if (brand) query.brand = brand;
 
+        // Apply brand filter if provided
+        if (brand) {
+            query.brand = brand;
+        }
+
+        // Define sort option based on query parameter
         let sortOption = {};
         if (sort === 'price-low-to-high') sortOption.price = 1;
         else if (sort === 'price-high-to-low') sortOption.price = -1;
@@ -22,10 +38,16 @@ const getShopProducts = async (req, res) => {
         else if (sort === 'z-a') sortOption.name = -1;
         else if (sort === 'new-arrivals') sortOption.createdAt = -1;
 
-        const products = await Product.find(query).sort(sortOption);
-        const categories = await Category.find();
-        const brands = await Product.distinct('brand', { isDeleted: false });
+        // Fetch products with the applied filters and sorting
+        const products = await Product.find(query).sort(sortOption).populate('category');
 
+        // Fetch categories for the filter dropdown
+        const categories = await Category.find();
+
+        // Fetch unique brands from active products
+        const brands = await Product.distinct('brand', { isDeleted: false, status: "Active" }); // Update to filter by status
+
+        // Render the shop.ejs template
         res.render('shop', {
             products,
             categories,
@@ -44,4 +66,4 @@ const getShopProducts = async (req, res) => {
     }
 };
 
-module.exports = { getShopProducts };
+module.exports = { getShopProducts };g
