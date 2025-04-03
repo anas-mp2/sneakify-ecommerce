@@ -48,19 +48,20 @@
             margin: 5px;
             border: 1px solid #2A3555;
         }
-        .image-preview {
-            max-width: 200px;
-            margin: 10px 0;
-            display: block; /* Ensure the image takes its own line */
-        }
         .cropper-container {
             max-width: 100%;
-            max-height: 400px;
-            margin-bottom: 40px; /* Increased spacing between each image-crop pair */
+            max-height: 600px; /* Increased height */
+            margin-bottom: 40px;
             display: flex;
-            flex-direction: column; /* Stack the image and button vertically */
-            align-items: flex-start; /* Align items to the left */
-            gap: 10px; /* Add spacing between the image and the crop button */
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .image-preview {
+            max-width: 100%; /* Allow full width */
+            max-height: 500px; /* Increased height */
+            margin: 10px 0;
+            display: block;
         }
         .image-section {
             margin-bottom: 100px; /* Keep this to ensure no overlap with the submit button */
@@ -72,6 +73,10 @@
             justify-content: flex-start;
             position: relative;
             z-index: 1;
+        }
+        #cropAllButton {
+            margin-top: 10px;
+            display: none; /* Hidden by default */
         }
     </style>
 </head>
@@ -127,6 +132,7 @@
                             <label for="images" class="form-label text-white">Product Images (Minimum 3)</label>
                             <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
                             <div id="imagePreview" class="mt-3"></div>
+                            <button id="cropAllButton" class="btn btn-success">Crop All</button>
                         </div>
                         <div class="submit-section">
                             <button type="submit" class="btn btn-primary">Add Product</button>
@@ -142,81 +148,99 @@
     <script>
         const imageInput = document.getElementById('images');
         const imagePreview = document.getElementById('imagePreview');
-        const form = document.getElementById('addProductForm'); // Use 'editProductForm' in edit-product.ejs
+        const form = document.getElementById('addProductForm');
+        const cropAllButton = document.getElementById('cropAllButton');
         let croppers = [];
         let croppedBlobs = [];
-    
+        let isCroppingComplete = false;
+
         imageInput.addEventListener('change', (event) => {
             const files = event.target.files;
             imagePreview.innerHTML = ''; // Clear previous previews
             croppers = [];
             croppedBlobs = [];
-    
-            // Adjust the minimum image check based on the file (add or edit)
-            const minImages = form.id === 'addProductForm' ? 3 : 0; // 3 for add, 0 for edit (optional)
-            if (files.length > 0 && files.length < 3 && form.id === 'addProductForm') {
+            isCroppingComplete = false;
+            cropAllButton.style.display = 'none'; // Hide until third image
+
+            // Check minimum images
+            if (files.length > 0 && files.length < 3) {
                 alert('Please upload at least 3 images.');
-                imageInput.value = ''; // Clear the input
+                imageInput.value = '';
                 return;
             }
-    
+
             Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const imgContainer = document.createElement('div');
                     imgContainer.className = 'cropper-container';
-    
+
                     const img = document.createElement('img');
                     img.src = e.target.result;
                     img.className = 'image-preview';
                     img.id = `image-${index}`;
-                    img.style.width = '100%'; // Ensure the image takes the full width of the container
+                    img.style.width = '100%';
                     imgContainer.appendChild(img);
-    
-                    const cropButton = document.createElement('button');
-                    cropButton.type = 'button';
-                    cropButton.className = 'btn btn-primary';
-                    cropButton.textContent = 'Crop Image';
-                    cropButton.style.marginTop = '10px'; // Add spacing between the image and the button
-                    cropButton.style.alignSelf = 'flex-start'; // Align the button to the left
-                    cropButton.addEventListener('click', () => cropImage(index));
-                    imgContainer.appendChild(cropButton);
-    
+
                     imagePreview.appendChild(imgContainer);
-    
+
                     const cropper = new Cropper(img, {
                         aspectRatio: 1,
-                        viewMode: 1,
+                        viewMode: 2, // Allows crop box to extend beyond container
                         autoCropArea: 0.8,
                         responsive: true,
+                        minContainerWidth: 800, // Larger container
+                        minContainerHeight: 600,
                     });
                     croppers[index] = cropper;
+
+                    // Show "Crop All" button after the third image
+                    if (index === 2 && files.length >= 3) {
+                        cropAllButton.style.display = 'block';
+                    }
                 };
                 reader.readAsDataURL(file);
             });
         });
-    
-        function cropImage(index) {
-            const cropper = croppers[index];
-            if (cropper) {
-                cropper.getCroppedCanvas({
-                    width: 800,
-                    height: 800,
-                }).toBlob((blob) => {
-                    croppedBlobs[index] = blob;
-                    alert('Image cropped successfully!');
-                }, 'image/jpeg');
+
+        cropAllButton.addEventListener('click', () => {
+            croppedBlobs = [];
+            let allCropped = true;
+
+            croppers.forEach((cropper, index) => {
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 800,
+                        height: 800,
+                    });
+                    if (canvas && canvas.width > 0 && canvas.height > 0) {
+                        canvas.toBlob((blob) => {
+                            croppedBlobs[index] = blob;
+                            if (index === croppers.length - 1) {
+                                isCroppingComplete = true;
+                                alert('All images cropped successfully!');
+                            }
+                        }, 'image/jpeg');
+                    } else {
+                        allCropped = false;
+                    }
+                }
+            });
+
+            if (!allCropped) {
+                alert('Please adjust the crop area for all images!');
+                isCroppingComplete = false;
             }
-        }
-    
+        });
+
         form.addEventListener('submit', (event) => {
             if (imageInput.files.length > 0) {
-                if (croppedBlobs.length !== imageInput.files.length || croppedBlobs.some(blob => !blob)) {
+                if (!isCroppingComplete || croppedBlobs.length !== imageInput.files.length || croppedBlobs.some(blob => !blob)) {
                     event.preventDefault();
                     alert('Please crop all images before submitting.');
                     return;
                 }
-    
+
                 const dataTransfer = new DataTransfer();
                 croppedBlobs.forEach((blob, index) => {
                     const file = new File([blob], `cropped-${index}.jpg`, { type: 'image/jpeg' });
