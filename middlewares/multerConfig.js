@@ -5,7 +5,8 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '../../public/uploads/products/');
+        const uploadDir = path.join(__dirname, '../public/images/products/');
+        console.log('Upload directory:', uploadDir); // Debug the path
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -38,18 +39,26 @@ const upload = multer({
 const processImages = async (files) => {
     const imagePaths = [];
     for (const file of files) {
-        const inputPath = path.join(__dirname, '../../public/uploads/products/', file.filename);
-        const outputPath = path.join(__dirname, '../../public/uploads/products/', `processed-${file.filename}`);
-
-        await sharp(inputPath)
-            .resize(800, 800, { fit: 'cover' })
-            .toFile(outputPath);
-
-        // Optionally delete the original unprocessed file
-        fs.unlinkSync(inputPath);
-
-        imagePaths.push(`/uploads/products/processed-${file.filename}`);
+        const inputPath = path.join(__dirname, '../public/images/products/', file.filename);
+        const outputPath = path.join(__dirname, '../public/images/products/', `processed-${file.filename}`);
+        console.log('Input Path:', inputPath); // Debug
+        console.log('Output Path:', outputPath); // Debug
+        try {
+            await sharp(inputPath)
+                .resize(800, 800, { 
+                    fit: 'contain', 
+                    withoutEnlargement: true, 
+                    background: { r: 255, g: 255, b: 255, alpha: 1 }
+                })
+                .toFile(outputPath);
+            fs.unlinkSync(inputPath);
+            imagePaths.push(`/images/products/processed-${file.filename}`);
+        } catch (error) {
+            console.error(`Error processing image ${file.filename}:`, error);
+            imagePaths.push(`/images/products/${file.filename}`);
+        }
     }
+    console.log('Processed image paths:', imagePaths); // Debug
     return imagePaths;
 };
 

@@ -28,42 +28,64 @@ const getAddProduct = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+console.log('Product model:', Product); // Debug the Product variable
 
-// Add new product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, brand, price, stockCount, status, category } = req.body;
-        
+        console.log('req.body:', req.body);
+        console.log('req.files:', req.files);
+        const { name, brand, price, stock, category } = req.body;
+
+        if (!stock || isNaN(stock)) {
+            const categories = await Category.find({ isDeleted: false });
+            return res.render('add-product', {
+                categories,
+                message: 'Stock is required and must be a valid number'
+            });
+        }
+
         if (!req.files || req.files.length < 3) {
-            const categories = await Category.find();
+            const categories = await Category.find({ isDeleted: false });
             return res.render('add-product', {
                 categories,
                 message: 'Please upload at least 3 images'
             });
         }
 
-        // Process images using your middleware function
+        const categoryDoc = await Category.findOne({ brand: category });
+        console.log('Category found:', categoryDoc);
+        if (!categoryDoc) {
+            const categories = await Category.find({ isDeleted: false });
+            return res.render('add-product', {
+                categories,
+                message: 'Selected category not found'
+            });
+        }
+
         const processedImagePaths = await processImages(req.files);
+        console.log('Processed image paths:', processedImagePaths);
 
         const product = new Product({
             name,
-            description,
             brand,
-            price,
-            stockCount,
-            status,
-            category,
+            price: parseFloat(price),
+            stock: parseInt(stock, 10),
+            category: categoryDoc._id,
             images: processedImagePaths
         });
 
+        console.log('Product to save:', product);
         await product.save();
-        res.redirect('/admin/products'); // Redirect to product list
+        res.redirect('/admin/products');
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
+        console.error('Add product error:', error.message, error.stack);
+        const categories = await Category.find({ isDeleted: false });
+        res.status(500).render('add-product', {
+            categories,
+            message: `An error occurred while adding the product: ${error.message}. Please try again.`
+        });
     }
 };
-
 // Render edit product page
 const getEditProduct = async (req, res) => {
     try {

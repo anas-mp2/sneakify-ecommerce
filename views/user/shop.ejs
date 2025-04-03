@@ -9,13 +9,12 @@
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        /* Your existing styles remain unchanged */
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
         }
-
-        /* Navbar Styles from Login Page */
         .navbar {
             background-color: #333;
             overflow: hidden;
@@ -24,43 +23,36 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .logo img {
             width: 70px;
             height: 70px;
             margin-left: 30px;
         }
-
         .nav-items {
             display: flex;
             align-items: center;
-            margin-left: auto; /* This aligns the items to the right */
+            margin-left: auto;
         }
-
         .nav-items a {
             color: white;
             padding: 14px 20px;
             text-decoration: none;
         }
-
         .nav-items a:hover {
             background-color: #ddd;
             color: black;
         }
-
         .search {
             display: flex;
             align-items: center;
             margin-left: 10px;
         }
-
         .search input {
             padding: 5px;
             margin-right: 5px;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-
         .search button {
             padding: 6px;
             border-radius: 5px;
@@ -69,29 +61,23 @@
             border: none;
             cursor: pointer;
         }
-
         .search button:hover {
             background-color: #DB4444;
         }
-
-        /* Main Content Styles */
         .search-bar {
             max-width: 500px;
             margin: 20px auto;
             display: flex;
             gap: 10px;
         }
-
         .search-bar .btn-primary {
             background-color: #DB4444;
             border-color: #DB4444;
         }
-
         .search-bar .btn-primary:hover {
             background-color: #c82333;
             border-color: #c82333;
         }
-
         .filter-section {
             background-color: #fff;
             padding: 15px;
@@ -99,34 +85,28 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             width: 100%;
-            max-width: 250px; /* Adjusted to match the screenshot */
+            max-width: 250px;
         }
-
         .filter-section h5 {
             font-weight: bold;
             margin-bottom: 15px;
             font-size: 1.25rem;
         }
-
         .filter-section .form-label {
             font-size: 0.9rem;
             font-weight: 500;
         }
-
         .filter-section .form-select,
         .filter-section .form-control {
             font-size: 0.9rem;
             padding: 5px;
         }
-
         .filter-section .row {
             margin: 0;
         }
-
         .filter-section .col {
             padding: 0 5px;
         }
-
         .product-card {
             background-color: #fff;
             border: 1px solid #ddd;
@@ -139,95 +119,77 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
         .product-card:hover {
             transform: scale(1.05);
         }
-
         .product-card img {
             max-height: 150px;
             object-fit: cover;
             border-radius: 8px;
             margin: 0 auto;
         }
-
         .product-card h6 {
             font-size: 1.1rem;
             margin: 10px 0;
         }
-
         .product-card p {
             color: #666;
             margin: 5px 0;
         }
-
         .btn-primary {
             background-color: #DB4444;
             border-color: #DB4444;
         }
-
         .btn-primary:hover {
             background-color: #c82333;
             border-color: #c82333;
         }
-
         .btn-outline-secondary {
             border-color: #ddd;
             color: #666;
         }
-
         .sort-section {
             display: flex;
             justify-content: flex-end;
             margin-bottom: 20px;
         }
-
         .sort-section .form-select {
             width: auto;
         }
-
-        /* Footer Styles from Login Page */
         footer {
-            background-color: #333; 
+            background-color: #333;
             color: white;
             padding: 40px 80px;
             font-family: Arial, sans-serif;
         }
-
         .footer-container {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            align-items: flex-start; /* Ensures all content aligns at the top */
+            align-items: flex-start;
         }
-
         .footer-section {
             width: 18%;
             display: flex;
             flex-direction: column;
-            align-items: start; /* Aligns everything to the left */
+            align-items: start;
         }
-
         .footer-section h3 {
             font-size: 18px;
             margin-bottom: 10px;
         }
-
         .footer-section p {
             font-size: 14px;
             margin: 5px 0;
         }
-
         .subscribe-box {
             display: flex;
             align-items: center;
-            max-width: 250px; /* Adjust width to match text above */
+            max-width: 250px;
             border: 1px solid white;
-            border-radius: 5px;
+            color: white;
             padding: 5px;
-            overflow: hidden;
         }
-
         .subscribe-box input {
             flex: 1;
             background: none;
@@ -236,7 +198,6 @@
             color: white;
             padding: 10px;
         }
-
         .subscribe-box button {
             background: none;
             border: none;
@@ -244,51 +205,42 @@
             cursor: pointer;
             padding: 10px 15px;
         }
-
         .imgdiv {
             padding-left: 6px;
             padding-top: 7px;
         }
-
         #qr-img {
             width: 60px;
             height: 60px;
         }
-
         #googleplay-img {
             height: 20px;
             width: 60%;
         }
-
         #appstore-img {
             height: 20px;
             width: 60%;
         }
-
         .qr-container {
             display: flex;
             flex-direction: row;
             align-items: start;
         }
-
         .qr-container img {
             width: 100px;
             margin-bottom: 5px;
         }
-
         .social-icons {
             margin-top: 10px;
             display: flex;
             gap: 10px;
         }
-
         .social-icons i {
             font-size: 20px;
             cursor: pointer;
             margin-top: 15px;
             margin-left: 7px;
         }
-
         .footer-bottom {
             text-align: center;
             padding-top: 20px;
@@ -304,6 +256,12 @@
 
     <!-- Main Content -->
     <div class="container my-5">
+        <% if (error) { %>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } %>
         <!-- Search Bar -->
         <form action="/products" method="GET" class="search-bar mx-auto d-flex">
             <input type="text" name="search" class="form-control me-2" placeholder="Search products..." value="<%= search %>">
@@ -391,7 +349,7 @@
                                     <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="img-fluid">
                                     <h6><%= product.name %></h6>
                                     <p class="text-muted"><%= product.brand %></p>
-                                    <p>$<%= product.price %></p>
+                                    <p>₹<%= product.price %></p>
                                     <a href="/products/<%= product._id %>" class="btn btn-primary">View Details</a>
                                 </div>
                             </div>

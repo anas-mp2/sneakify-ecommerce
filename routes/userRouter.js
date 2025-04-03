@@ -42,6 +42,8 @@ const router = express.Router();
 const passport = require('passport');
 const userController = require('../controller/user/userController');
 const userProductController = require('../controller/user/userProductController');
+const productDetailsController = require('../controller/user/productDetailsController');
+const cartController = require('../controller/cart/cartController');
 
 router.get('/', userController.loadLoginPage);
 router.get('/pageNotFound', userController.pageNotFound);
@@ -69,7 +71,12 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
 
 router.get('/auth/google/logout', userController.logout);
 
-// Fix the route to use getShopProducts
+// Product routes
 router.get('/products', userProductController.getShopProducts);
+router.get('/products/:id', productDetailsController.getProductDetails);
+router.post('/cart/add/:id', cartController.addToCart);
+
+// New route for submitting a review
+router.post('/products/:id/review', productDetailsController.submitReview);
 
 module.exports = router;
