@@ -281,7 +281,7 @@
                             <select name="category" id="category" class="form-select">
                                 <option value="">All Categories</option>
                                 <% categories.forEach(cat => { %>
-                                    <option value="<%= cat.brand %>" <%= category === cat.brand ? 'selected' : '' %>><%= cat.brand %></option>
+                                    <option value="<%= cat.description %>" <%= category === cat.description ? 'selected' : '' %>><%= cat.description %></option>
                                 <% }) %>
                             </select>
                         </div>
@@ -343,13 +343,31 @@
                 <!-- Products Grid -->
                 <div class="row">
                     <% if (products.length > 0) { %>
-                        <% products.forEach(product => { %>
+                        <% products.forEach((product, index) => { %>
                             <div class="col-md-4 mb-4">
                                 <div class="product-card">
                                     <img src="<%= product.images[0] %>" alt="<%= product.name %>" class="img-fluid">
                                     <h6><%= product.name %></h6>
                                     <p class="text-muted"><%= product.brand %></p>
-                                    <p>₹<%= product.price %></p>
+                                    <div>
+                                        <% 
+                                            // Hardcode discount UI for specific products (e.g., first 2 products)
+                                            const originalPrice = product.price;
+                                            const isDiscounted = index < 2; // Apply discount to first 2 products only
+                                            const discountedPrice = isDiscounted ? Math.round(originalPrice * 0.9) : originalPrice; // 10% off
+                                            const couponMessage = isDiscounted ? 'Coupon "SAVE10" applied' : '';
+                                            const discountPercentage = isDiscounted ? 10 : 0;
+                                        %>
+                                        <% if (isDiscounted) { %>
+                                            <p style="text-decoration: line-through; color: #999;">₹<%= originalPrice %></p>
+                                            <p style="color: #DB4444; font-weight: bold;">₹<%= discountedPrice %></p>
+                                            <p style="color: green; font-size: 0.9rem;">
+                                                <%= couponMessage || `${discountPercentage}% Off` %>
+                                            </p>
+                                        <% } else { %>
+                                            <p>₹<%= originalPrice %></p>
+                                        <% } %>
+                                    </div>
                                     <a href="/products/<%= product._id %>" class="btn btn-primary">View Details</a>
                                 </div>
                             </div>

@@ -6,16 +6,26 @@ const getShopProducts = async (req, res) => {
         const { search, category, minPrice, maxPrice, brand, sort, error } = req.query;
 
         // Base query with isDeleted and status filters
-        let query = { isDeleted: false, status: "Active" }; // Add status: "Active" here
+        let query = { isDeleted: false, status: "Active" };
 
         // Apply search filter if provided
         if (search) {
             query.name = { $regex: search, $options: 'i' };
         }
 
-        // Apply category filter if provided
+        // Apply category filter based on description if provided
         if (category) {
-            query.category = category;
+            // Find categories with the matching description
+            const matchingCategories = await Category.find({ description: category });
+            if (matchingCategories.length > 0) {
+                // Extract the category IDs
+                const categoryIds = matchingCategories.map(cat => cat._id);
+                // Filter products by these category IDs
+                query.category = { $in: categoryIds };
+            } else {
+                // If no categories match the description, return no products
+                query.category = null; // This ensures no products are returned
+            }
         }
 
         // Apply price range filter if provided
@@ -41,11 +51,11 @@ const getShopProducts = async (req, res) => {
         // Fetch products with the applied filters and sorting
         const products = await Product.find(query).sort(sortOption).populate('category');
 
-        // Fetch categories for the filter dropdown
+        // Fetch all categories for the filter dropdown
         const categories = await Category.find();
 
         // Fetch unique brands from active products
-        const brands = await Product.distinct('brand', { isDeleted: false, status: "Active" }); // Update to filter by status
+        const brands = await Product.distinct('brand', { isDeleted: false, status: "Active" });
 
         // Render the shop.ejs template
         res.render('shop', {
@@ -58,7 +68,7 @@ const getShopProducts = async (req, res) => {
             maxPrice: maxPrice || '',
             brand: brand || '',
             sort: sort || '',
-            error: error || '' // Pass error from query
+            error: error || ''
         });
     } catch (error) {
         console.error(error);
@@ -66,4 +76,4 @@ const getShopProducts = async (req, res) => {
     }
 };
 
-module.exports = { getShopProducts };g
+module.exports = { getShopProducts };
